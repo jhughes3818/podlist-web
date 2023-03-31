@@ -26,7 +26,8 @@ export default async function handler(req, res) {
   const episodeTitleNoSpaces = data["og:title"]
     .replace(/[^\w\s]|_/g, "")
     .replace(/\s+/g, "+")
-    .replace(/[0-9]/g, "");
+    .replace(/[0-9]/g, "")
+    .replace(/\b(ep(isode)?|e(p)?\.?)\b/gi, "");
 
   console.log(episodeTitleNoSpaces);
 
