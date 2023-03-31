@@ -23,7 +23,7 @@ export default function Home() {
     }
 
     axios
-      .post("http://localhost:3000/api/add", {
+      .post("/api/add", {
         url: url,
       })
       .then((res) => {
