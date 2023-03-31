@@ -14,6 +14,10 @@ export default function Episode({ episode }) {
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Podlist" />
         <meta property="og:locale" content="en_US" />
+
+        <meta name="twitter:title" content={episode.title} />
+        <meta name="twitter:description" content={episode.description} />
+        <meta name="twitter:image" content={episode.image} />
       </Head>
       <div className="grid h-screen place-items-center">
         <div className="w-96 items-center justify-center rounded-lg border-b-4 border-l-2 border-r-4 border-t-2 border-black p-5">
