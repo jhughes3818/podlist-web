@@ -1,4 +1,3 @@
-import { fetch } from "fetch-opengraph";
 import axios from "axios";
 import Head from "next/head";
 
@@ -39,7 +38,7 @@ export async function getServerSideProps(context) {
   const { id } = context.query;
 
   // Get og data
-  const og = await axios.get("/api/og", {
+  const og = await axios.get("https://podlist-web-js-mmfx.vercel.app/api/og", {
     params: {
       episode_id: id,
     },
