@@ -19,7 +19,16 @@ export default async function handler(req, res) {
 
   const data = await fetch(episodeData.url);
 
-  const episodeTitleNoSpaces = data["og:title"].replace(/ /g, "+");
+  // Remove spaces, punctuation and numbers from episode title
+
+  console.log(data["og:title"]);
+
+  const episodeTitleNoSpaces = data["og:title"]
+    .replace(/[^\w\s]|_/g, "")
+    .replace(/\s+/g, "+")
+    .replace(/[0-9]/g, "");
+
+  console.log(episodeTitleNoSpaces);
 
   // Get apple podcast data
   const appleResponse = await axios.get(
