@@ -17,35 +17,43 @@ export default async function handler(req, res) {
   }
   console.log(episodeData);
 
-  const data = await fetch(episodeData.url);
+  // Check if title, description, and image are in the database already
+  // If they are, send back the episode data
+  // If they aren't, get the og data and send back the episode data
 
-  // Remove spaces, punctuation and numbers from episode title
+  if (
+    episodeData.title &&
+    episodeData.description &&
+    episodeData.image &&
+    episodeData.show &&
+    episodeData.appleURL &&
+    episodeData.spotifyURL
+  ) {
+    const episodeObject = {
+      title: episodeData.title,
+      description: episodeData.description,
+      image: episodeData.image,
+      show: episodeData.show,
+      appleURL: episodeData.appleURL,
+      spotifyURL: episodeData.spotifyURL,
+    };
 
-  console.log(data["og:title"]);
+    res.status(200).json(episodeObject);
+  } else {
+    const ogData = await fetch(episodeData.url);
 
-  const episodeTitleNoSpaces = data["og:title"]
-    .replace(/[^\w\s]|_/g, "")
-    .replace(/\s+/g, "+")
-    .replace(/[0-9]/g, "")
-    .replace(/\b(ep(isode)?|e(p)?\.?)\b/gi, "");
+    // Extract the title, description, and image from the og data
+    const title = ogData["og:title"];
+    const description = ogData["og:description"];
+    const image = ogData["og:image"];
 
-  console.log(episodeTitleNoSpaces);
+    const episodeObject = {
+      title: title,
+      description: description,
+      image: image,
+      spotifyURL: episodeData.url,
+    };
 
-  // Get apple podcast data
-  const appleResponse = await axios.get(
-    `https://itunes.apple.com/search?term=${episodeTitleNoSpaces}&entity=podcastEpisode`
-  );
-
-  console.log(appleResponse.data.results[0]);
-
-  const episodeObject = {
-    title: data["og:title"],
-    description: appleResponse.data.results[0].description,
-    image: data["og:image"],
-    show: appleResponse.data.results[0].collectionName,
-    appleURL: appleResponse.data.results[0].trackViewUrl,
-    spotifyURL: data["og:url"],
-  };
-
-  res.status(200).json(episodeObject);
+    res.status(200).json(episodeObject);
+  }
 }
