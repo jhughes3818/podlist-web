@@ -35,24 +35,26 @@ export default function Episode({ episode }) {
                 </div>
               </a>
             </div>
-            <div className=" rounded-lg border-2 border-black px-2 py-1">
-              <a href={episode.appleURL}>
-                <div className="flex flex-row">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Podcasts_%28iOS%29.svg/1920px-Podcasts_%28iOS%29.svg.png"
-                    className="h-8"
-                  ></img>
-                  <div className="ml-3">
-                    <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
-                      Listen on
-                    </p>
-                    <p className="text-md font-bold mt-0 p-0 leading-none">
-                      Apple Podcasts
-                    </p>
+            {episode.appleURL ? (
+              <div className=" rounded-lg border-2 border-black px-2 py-1">
+                <a href={episode.appleURL}>
+                  <div className="flex flex-row">
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Podcasts_%28iOS%29.svg/1920px-Podcasts_%28iOS%29.svg.png"
+                      className="h-8"
+                    ></img>
+                    <div className="ml-3">
+                      <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
+                        Listen on
+                      </p>
+                      <p className="text-md font-bold mt-0 p-0 leading-none">
+                        Apple Podcasts
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </a>
-            </div>
+                </a>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
