@@ -91,6 +91,7 @@ export default async function handler(req, res) {
     image: image,
     spotifyURL: req.body.url,
     appleURL: appleResponse.data.results[0].trackViewUrl,
+    url: req.body.url,
   };
 
   if (episodeData.length === 0) {

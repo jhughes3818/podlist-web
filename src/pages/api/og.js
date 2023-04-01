@@ -47,12 +47,80 @@ export default async function handler(req, res) {
     const description = ogData["og:description"];
     const image = ogData["og:image"];
 
+    // Search itunes api for the podcast
+    // Create first call to itunes api
+    const episodeTitleSearch = title
+      .replace(/[^\w\s]|_/g, "")
+      .replace(/\s+/g, "+");
+
+    // Search itunes api for the podcast
+
+    const episodeTitleNoSpaces = title
+      .replace(/[^\w\s]|_/g, "")
+      .replace(/\s+/g, "+")
+      .replace(/[0-9]/g, "")
+      .replace(/\b(ep(isode)?|e(p)?\.?|show)\b/gi, "");
+
+    const episodeTitleFirst20 = episodeTitleNoSpaces.slice(0, 50);
+    const episodeTitleFirst60 = episodeTitleNoSpaces.slice(0, 60);
+    const episodeTitleWithNumbers = title
+      .replace(/[^\w\s]|_/g, "")
+      .replace(/\s+/g, "+")
+      .replace(/\b(ep(isode)?|e(p)?\.?|show)\b/gi, "");
+
+    const episodeTitleFirst20WithNumbers = episodeTitleWithNumbers.slice(0, 50);
+
+    console.log(episodeTitleFirst20);
+    console.log("hello");
+
+    // Get apple podcast data
+    let appleResponse = await axios.get(
+      `https://itunes.apple.com/search?term=${episodeTitleFirst20}&entity=podcastEpisode`
+    );
+
+    if (appleResponse.data.results.length === 0) {
+      console.log("Trying second call");
+      appleResponse = await axios.get(
+        `https://itunes.apple.com/search?term=${episodeTitleFirst20WithNumbers}&entity=podcastEpisode`
+      );
+    }
+
+    if (appleResponse.data.results.length === 0) {
+      console.log("Trying third call");
+      appleResponse = await axios.get(
+        `https://itunes.apple.com/search?term=${episodeTitleFirst60}&entity=podcastEpisode`
+      );
+    }
+
+    if (appleResponse.data.results.length === 0) {
+      console.log("Trying fourth call");
+      appleResponse = await axios.get(
+        `https://itunes.apple.com/search?term=${episodeTitleWithNumbers}&entity=podcastEpisode`
+      );
+    }
+
+    if (appleResponse.data.results.length === 0) {
+      console.log("Trying fifth call");
+      appleResponse = await axios.get(
+        `https://itunes.apple.com/search?term=${episodeTitleSearch}&entity=podcastEpisode`
+      );
+    }
+
     const episodeObject = {
       title: title,
       description: description,
       image: image,
       spotifyURL: episodeData.url,
+      appleURL: appleResponse.data.results[0].trackViewUrl,
+      show: appleResponse.data.results[0].collectionName,
+      url: episodeData.url,
     };
+
+    // Update the episode in the database
+    const { data, error } = await supabase
+      .from("episodes")
+      .update(episodeObject)
+      .eq("id", id);
 
     res.status(200).json(episodeObject);
   }
