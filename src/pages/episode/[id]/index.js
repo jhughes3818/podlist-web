@@ -24,7 +24,7 @@ export default function Episode({ episode }) {
           <img src={episode.image} className="h-50 w-50 mx-auto rounded-lg" />
           <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
           <p className="text-gray-600">{episode.show}</p>
-          <div className="mt-2 flex flex-row items-center justify-center gap-2">
+          <div className="mt-2 flex flex-row gap-2">
             <div className="w-max rounded-lg border-2 border-black px-2 py-1">
               <a href={episode.spotifyURL}>
                 <div>
@@ -35,7 +35,7 @@ export default function Episode({ episode }) {
                 </div>
               </a>
             </div>
-            <div className="w-max rounded-lg border-2 border-black px-2 py-1">
+            <div className=" rounded-lg border-2 border-black px-2 py-1">
               <a href={episode.appleURL}>
                 <div className="flex flex-row">
                   <img
