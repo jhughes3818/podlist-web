@@ -106,22 +106,43 @@ export default async function handler(req, res) {
       );
     }
 
-    const episodeObject = {
-      title: title,
-      description: description,
-      image: image,
-      spotifyURL: episodeData.url,
-      appleURL: appleResponse.data.results[0].trackViewUrl,
-      show: appleResponse.data.results[0].collectionName,
-      url: episodeData.url,
-    };
+    if (appleResponse.data.results.length === 0) {
+      // Create episode object with null for show and appleURL
+      const episodeObject = {
+        title: title,
+        description: description,
+        image: image,
+        spotifyURL: episodeData.url,
+        appleURL: null,
+        show: null,
+        url: episodeData.url,
+      };
+
+      const { data, error } = await supabase
+        .from("episodes")
+        .update(episodeObject)
+        .eq("id", id);
+
+      res.status(200).json(episodeObject);
+    } else {
+      const episodeObject = {
+        title: title,
+        description: description,
+        image: image,
+        spotifyURL: episodeData.url,
+        appleURL: appleResponse.data.results[0].trackViewUrl,
+        show: appleResponse.data.results[0].collectionName,
+        url: episodeData.url,
+      };
+
+      const { data, error } = await supabase
+        .from("episodes")
+        .update(episodeObject)
+        .eq("id", id);
+
+      res.status(200).json(episodeObject);
+    }
 
     // Update the episode in the database
-    const { data, error } = await supabase
-      .from("episodes")
-      .update(episodeObject)
-      .eq("id", id);
-
-    res.status(200).json(episodeObject);
   }
 }
