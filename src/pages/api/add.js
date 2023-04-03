@@ -3,11 +3,16 @@ import { fetch } from "fetch-opengraph";
 import axios from "axios";
 
 export default async function handler(req, res) {
+  // Get first 55 characters of the url
+  const urlFirst55 = req.body.url.slice(0, 55);
+
+  console.log(urlFirst55);
+
   // Check if the url is already in the database
   const { data: episodeData, error } = await supabase
     .from("episodes")
     .select("*")
-    .eq("url", req.body.url);
+    .eq("url", urlFirst55);
   if (error) {
     console.log(error);
   }
@@ -18,7 +23,7 @@ export default async function handler(req, res) {
   let data = null;
 
   // Get the og data
-  const ogData = await fetch(req.body.url);
+  const ogData = await fetch(urlFirst55);
 
   // Extract the title, description, and image from the og data
   const title = ogData["og:title"];
@@ -89,9 +94,9 @@ export default async function handler(req, res) {
     description: description,
     show: appleResponse.data.results[0].collectionName,
     image: image,
-    spotifyURL: req.body.url,
+    spotifyURL: urlFirst55,
     appleURL: appleResponse.data.results[0].trackViewUrl,
-    url: req.body.url,
+    url: urlFirst55,
   };
 
   if (episodeData.length === 0) {
