@@ -4,18 +4,18 @@ import axios from "axios";
 
 export default async function handler(req, res) {
   const id = req.query.episode_id;
-  console.log(id);
+  // console.log(id);
 
-  console.log("Getting Episode");
+  // console.log("Getting Episode");
   const { data: episodeData, error } = await supabase
     .from("episodes")
     .select("*")
     .eq("id", id)
     .single();
   if (error) {
-    console.log(error);
+    // console.log(error);
   }
-  console.log(episodeData);
+  // console.log(episodeData);
 
   // Check if title, description, and image are in the database already
   // If they are, send back the episode data
@@ -47,6 +47,11 @@ export default async function handler(req, res) {
     const description = ogData["og:description"];
     const image = ogData["og:image"];
 
+    // Encode the title in url encoding
+    const titleEncoded = encodeURIComponent(title);
+
+    console.log(titleEncoded);
+
     // Search itunes api for the podcast
     // Create first call to itunes api
     const episodeTitleSearch = title
@@ -70,41 +75,41 @@ export default async function handler(req, res) {
 
     const episodeTitleFirst20WithNumbers = episodeTitleWithNumbers.slice(0, 50);
 
-    console.log(episodeTitleFirst20);
-    console.log("hello");
+    // console.log(episodeTitleFirst20);
+    // console.log("hello");
 
     // Get apple podcast data
     let appleResponse = await axios.get(
-      `https://itunes.apple.com/search?term=${episodeTitleFirst20}&entity=podcastEpisode`
+      `https://itunes.apple.com/search?term=${titleEncoded}&entity=podcastEpisode`
     );
 
-    if (appleResponse.data.results.length === 0) {
-      console.log("Trying second call");
-      appleResponse = await axios.get(
-        `https://itunes.apple.com/search?term=${episodeTitleFirst20WithNumbers}&entity=podcastEpisode`
-      );
-    }
+    // if (appleResponse.data.results.length === 0) {
+    //   // console.log("Trying second call");
+    //   appleResponse = await axios.get(
+    //     `https://itunes.apple.com/search?term=${episodeTitleFirst20WithNumbers}&entity=podcastEpisode`
+    //   );
+    // }
 
-    if (appleResponse.data.results.length === 0) {
-      console.log("Trying third call");
-      appleResponse = await axios.get(
-        `https://itunes.apple.com/search?term=${episodeTitleFirst60}&entity=podcastEpisode`
-      );
-    }
+    // if (appleResponse.data.results.length === 0) {
+    //   // console.log("Trying third call");
+    //   appleResponse = await axios.get(
+    //     `https://itunes.apple.com/search?term=${episodeTitleFirst60}&entity=podcastEpisode`
+    //   );
+    // }
 
-    if (appleResponse.data.results.length === 0) {
-      console.log("Trying fourth call");
-      appleResponse = await axios.get(
-        `https://itunes.apple.com/search?term=${episodeTitleWithNumbers}&entity=podcastEpisode`
-      );
-    }
+    // if (appleResponse.data.results.length === 0) {
+    //   // console.log("Trying fourth call");
+    //   appleResponse = await axios.get(
+    //     `https://itunes.apple.com/search?term=${episodeTitleWithNumbers}&entity=podcastEpisode`
+    //   );
+    // }
 
-    if (appleResponse.data.results.length === 0) {
-      console.log("Trying fifth call");
-      appleResponse = await axios.get(
-        `https://itunes.apple.com/search?term=${episodeTitleSearch}&entity=podcastEpisode`
-      );
-    }
+    // if (appleResponse.data.results.length === 0) {
+    //   // console.log("Trying fifth call");
+    //   appleResponse = await axios.get(
+    //     `https://itunes.apple.com/search?term=${episodeTitleSearch}&entity=podcastEpisode`
+    //   );
+    // }
 
     if (appleResponse.data.results.length === 0) {
       // Create episode object with null for show and appleURL
