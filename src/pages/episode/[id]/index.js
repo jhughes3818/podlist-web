@@ -20,6 +20,15 @@ export default function Episode({ episode }) {
         <meta name="twitter:image" content={episode.image} />
       </Head>
       <div className="grid h-screen place-items-center">
+        <div>
+          <p className="mb-0">
+            Want to make your own link? Do it{" "}
+            <a href="/" className="bg-blue-200  rounded-sm px-1">
+              here
+            </a>
+            .
+          </p>
+        </div>
         <div className="w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 border-black p-5">
           <img src={episode.image} className="h-50 w-50 mx-auto rounded-lg" />
           <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
