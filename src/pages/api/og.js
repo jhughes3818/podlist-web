@@ -27,7 +27,8 @@ export default async function handler(req, res) {
     episodeData.image &&
     episodeData.show &&
     episodeData.appleURL &&
-    episodeData.spotifyURL
+    episodeData.spotifyURL &&
+    episodeData.youtubeURL
   ) {
     const episodeObject = {
       title: episodeData.title,
@@ -36,6 +37,7 @@ export default async function handler(req, res) {
       show: episodeData.show,
       appleURL: episodeData.appleURL,
       spotifyURL: episodeData.spotifyURL,
+      youtubeURL: episodeData.youtubeURL,
     };
 
     res.status(200).json(episodeObject);
