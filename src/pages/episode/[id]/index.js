@@ -70,7 +70,7 @@ export default function Episode({ episode }) {
                 <div>
                   {episode.youtubeURL ? (
                     <div className="rounded-lg border-2 border-black px-2 py-1 w-40">
-                      <a href={episode.appleURL}>
+                      <a href={episode.youtubeURL}>
                         <div className="flex flex-row items-center justify-center">
                           <img
                             src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png?20220706172052"
