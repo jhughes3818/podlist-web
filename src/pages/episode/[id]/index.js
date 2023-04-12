@@ -99,7 +99,7 @@ export async function getServerSideProps(context) {
   const { id } = context.query;
 
   //Get og data
-  const og = await axios.get("https://podlist-web-js-mmfx.vercel.app/api/og", {
+  const og = await axios.get("https://podlist.co/api/og", {
     params: {
       episode_id: id,
     },
