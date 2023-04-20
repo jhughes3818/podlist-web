@@ -18,6 +18,7 @@ export default function Episode({ episode }) {
         <meta name="twitter:title" content={episode.title} />
         <meta name="twitter:description" content={episode.description} />
         <meta name="twitter:image" content={episode.image} />
+        <link rel="icon" href={episode.image} />
       </Head>
       <div className="grid h-screen place-items-center">
         <div>
