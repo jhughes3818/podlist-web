@@ -41,7 +41,7 @@ export default function Home() {
         <title>PodList</title>
         <meta name="description" content="Create Universal Podcast Links" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="https://fav.farm/🔥" />
       </Head>
       <main className={styles.main}>
         <div className="grid place-items-center h-screen">
