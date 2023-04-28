@@ -96,7 +96,7 @@ export default function Episode({ episode }) {
   );
 }
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   const { id } = context.query;
 
   //Get og data
@@ -121,26 +121,26 @@ export async function getStaticProps(context) {
   };
 }
 
-export async function getStaticPaths() {
-  try {
-    const episodes = await axios.get("https://podlist.co/api/episodes");
-    console.log(episodes);
+// export async function getStaticPaths() {
+//   try {
+//     const episodes = await axios.get("https://podlist.co/api/episodes");
+//     console.log(episodes);
 
-    const paths = episodes.data.map((episode) => ({
-      params: {
-        id: episode.id.toString(),
-      },
-    }));
+//     const paths = episodes.data.map((episode) => ({
+//       params: {
+//         id: episode.id.toString(),
+//       },
+//     }));
 
-    return {
-      paths,
-      fallback: "blocking",
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
-}
+//     return {
+//       paths,
+//       fallback: "blocking",
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       paths: [],
+//       fallback: "blocking",
+//     };
+//   }
+// }
