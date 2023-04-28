@@ -11,7 +11,7 @@ export default function Episode({ episode }) {
       <Head>
         <title>{episode.title}</title>
         <meta name="description" content={episode.description} />
-        <meta property="og:title" content={episode.title} />
+        <meta property="og:title" content={episode.title.toString()} />
         <meta property="og:description" content={episode.description} />
         <meta property="og:image" content={episode.image} />
         <meta property="og:url" content={episode.spotifyURL} />
