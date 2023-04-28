@@ -165,8 +165,6 @@ export async function getStaticPaths() {
     },
   }));
 
-  console.log(episode);
-
   return {
     paths,
     fallback: true,
