@@ -3,6 +3,7 @@ import Head from "next/head";
 import supabase from "../../../../utils/supabase";
 
 export default function Episode({ episode }) {
+  console.log(episode);
   return (
     <>
       <Head>
