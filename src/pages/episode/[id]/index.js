@@ -148,7 +148,7 @@ export async function getStaticProps({ params }) {
 }
 export async function getStaticPaths() {
   // Fetch the episode ids from Supabase
-  const { data, error } = await supabase.from("episodes").select("id");
+  const { data, error } = await supabase.from("episodes").select("*");
 
   if (error) {
     console.error(error);
