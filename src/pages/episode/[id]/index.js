@@ -1,6 +1,7 @@
 import axios from "axios";
 import Head from "next/head";
 import supabase from "../../../../utils/supabase";
+import EpisodeCard from "@/components/episodeCard";
 
 export default function Episode({ episode }) {
   if (episode.title === undefined) {
@@ -24,81 +25,7 @@ export default function Episode({ episode }) {
         <meta name="twitter:image" content={episode.image} />
         <link rel="icon" href={episode.image} />
       </Head>
-      <div className="grid h-screen place-items-center">
-        <div>
-          <p className="mb-0">
-            Want to make your own link? Do it{" "}
-            <a href="/" className="bg-blue-200  rounded-sm px-1">
-              here
-            </a>
-            .
-          </p>
-
-          <div className="w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 border-black p-5">
-            <img
-              src={episode.image || null}
-              className="h-50 w-50 mx-auto rounded-lg"
-            />
-            <h1 className="mt-2 text-2xl font-bold">{episode.title || null}</h1>
-            <p className="text-gray-600">{episode.show || null}</p>
-            <div>
-              <div className="flex flex-col gap-2">
-                <div className="mt-2 flex flex-row gap-2">
-                  <div className="w-max rounded-lg border-2 border-black px-2 py-1">
-                    <a href={episode.spotifyURL || null}>
-                      <div>
-                        <img
-                          src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Black.png"
-                          className="h-8"
-                        ></img>
-                      </div>
-                    </a>
-                  </div>
-                  {episode.appleURL ? (
-                    <div className=" rounded-lg border-2 border-black px-2 py-1">
-                      <a href={episode.appleURL}>
-                        <div className="flex flex-row">
-                          <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Podcasts_%28iOS%29.svg/1920px-Podcasts_%28iOS%29.svg.png"
-                            className="h-8"
-                          ></img>
-                          <div className="ml-3">
-                            <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
-                              Listen on
-                            </p>
-                            <p className="text-md font-bold mt-0 p-0 leading-none">
-                              Apple Podcasts
-                            </p>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  ) : null}
-                </div>
-                <div>
-                  {episode.youtubeURL ? (
-                    <div className="rounded-lg border-2 border-black px-2 py-1 w-40">
-                      <a href={episode.youtubeURL}>
-                        <div className="flex flex-row items-center justify-center">
-                          <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png?20220706172052"
-                            className="h-8"
-                          ></img>
-                          <div className="ml-3">
-                            <p className="text-md font-bold mt-0 p-0 leading-none">
-                              YouTube
-                            </p>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* <EpisodeCard id={episode.id} /> */}
     </>
   );
 }
@@ -131,26 +58,25 @@ export default function Episode({ episode }) {
 export async function getStaticProps({ params }) {
   const { id } = params;
 
-  try {
-    const og = await axios.get("https://podlist.co/api/og", {
-      params: {
-        episode_id: id,
-      },
-    });
+  //Get episode data from Supabase
+  const { data: episodeData, error } = await supabase
+    .from("episodes")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-    const episode = og.data;
-
+  if (error) {
+    console.error(error);
     return {
-      props: {
-        episode,
-      },
-      revalidate: 60, // Regenerate at most once every 60 seconds
-    };
-  } catch (error) {
-    return {
-      notFound: true,
+      props: {},
     };
   }
+
+  return {
+    props: {
+      episode: episodeData,
+    },
+  };
 }
 export async function getStaticPaths() {
   // Fetch the episode ids from Supabase
