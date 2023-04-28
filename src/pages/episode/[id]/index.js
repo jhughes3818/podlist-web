@@ -10,11 +10,11 @@ export default function Episode({ episode }) {
     <>
       <Head>
         <title>{episode.title}</title>
-        <meta name="description" content={episode.description} />
-        <meta property="og:title" content={episode.title.toString()} />
-        <meta property="og:description" content={episode.description} />
-        <meta property="og:image" content={episode.image} />
-        <meta property="og:url" content={episode.spotifyURL} />
+        <meta name="description" content={episode.description || null} />
+        <meta property="og:title" content={episode.title || "Episode"} />
+        <meta property="og:description" content={episode.description || null} />
+        <meta property="og:image" content={episode.image || null} />
+        <meta property="og:url" content={episode.spotifyURL || null} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Podlist" />
         <meta property="og:locale" content="en_US" />
@@ -35,14 +35,17 @@ export default function Episode({ episode }) {
           </p>
 
           <div className="w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 border-black p-5">
-            <img src={episode.image} className="h-50 w-50 mx-auto rounded-lg" />
-            <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
-            <p className="text-gray-600">{episode.show}</p>
+            <img
+              src={episode.image || null}
+              className="h-50 w-50 mx-auto rounded-lg"
+            />
+            <h1 className="mt-2 text-2xl font-bold">{episode.title || null}</h1>
+            <p className="text-gray-600">{episode.show || null}</p>
             <div>
               <div className="flex flex-col gap-2">
                 <div className="mt-2 flex flex-row gap-2">
                   <div className="w-max rounded-lg border-2 border-black px-2 py-1">
-                    <a href={episode.spotifyURL}>
+                    <a href={episode.spotifyURL || null}>
                       <div>
                         <img
                           src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Black.png"
