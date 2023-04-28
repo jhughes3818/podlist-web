@@ -3,7 +3,9 @@ import Head from "next/head";
 import supabase from "../../../../utils/supabase";
 
 export default function Episode({ episode }) {
-  console.log(episode);
+  if (episode.title === undefined) {
+    console.log(episode.id);
+  }
   return (
     <>
       <Head>
