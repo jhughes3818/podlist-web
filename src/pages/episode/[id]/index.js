@@ -125,22 +125,27 @@ export default function Episode({ episode }) {
 export async function getStaticProps({ params }) {
   const { id } = params;
 
-  const og = await axios.get("https://podlist.co/api/og", {
-    params: {
-      episode_id: id,
-    },
-  });
+  try {
+    const og = await axios.get("https://podlist.co/api/og", {
+      params: {
+        episode_id: id,
+      },
+    });
 
-  const episode = og.data;
+    const episode = og.data;
 
-  return {
-    props: {
-      episode,
-    },
-    revalidate: 60, // Regenerate at most once every 60 seconds
-  };
+    return {
+      props: {
+        episode,
+      },
+      revalidate: 60, // Regenerate at most once every 60 seconds
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
 }
-
 export async function getStaticPaths() {
   // Fetch the episode ids from Supabase
   const { data, error } = await supabase.from("episodes").select("id");
