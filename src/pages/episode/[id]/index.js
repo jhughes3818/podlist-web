@@ -1,5 +1,6 @@
 import axios from "axios";
 import Head from "next/head";
+import supabase from "../../../../utils/supabase";
 
 export default function Episode({ episode }) {
   return (
@@ -96,21 +97,39 @@ export default function Episode({ episode }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const { id } = context.query;
+// export async function getServerSideProps(context) {
+//   const { id } = context.query;
 
-  //Get og data
+//   //Get og data
+//   const og = await axios.get("https://podlist.co/api/og", {
+//     params: {
+//       episode_id: id,
+//     },
+//   });
+
+//   // const og = await axios.get("http://localhost:3000/api/og", {
+//   //   params: {
+//   //     episode_id: id,
+//   //   },
+//   // });
+
+//   const episode = og.data;
+
+//   return {
+//     props: {
+//       episode,
+//     },
+//   };
+// }
+
+export async function getStaticProps({ params }) {
+  const { id } = params;
+
   const og = await axios.get("https://podlist.co/api/og", {
     params: {
       episode_id: id,
     },
   });
-
-  // const og = await axios.get("http://localhost:3000/api/og", {
-  //   params: {
-  //     episode_id: id,
-  //   },
-  // });
 
   const episode = og.data;
 
@@ -118,29 +137,31 @@ export async function getServerSideProps(context) {
     props: {
       episode,
     },
+    revalidate: 60, // Regenerate at most once every 60 seconds
   };
 }
 
-// export async function getStaticPaths() {
-//   try {
-//     const episodes = await axios.get("https://podlist.co/api/episodes");
-//     console.log(episodes);
+export async function getStaticPaths() {
+  // Fetch the episode ids from Supabase
+  const { data, error } = await supabase.from("episodes").select("id");
 
-//     const paths = episodes.data.map((episode) => ({
-//       params: {
-//         id: episode.id.toString(),
-//       },
-//     }));
+  if (error) {
+    console.error(error);
+    return {
+      paths: [],
+      fallback: true,
+    };
+  }
 
-//     return {
-//       paths,
-//       fallback: "blocking",
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     return {
-//       paths: [],
-//       fallback: "blocking",
-//     };
-//   }
-// }
+  // Map the episode ids to Next.js path objects
+  const paths = data.map((episode) => ({
+    params: {
+      id: episode.id.toString(),
+    },
+  }));
+
+  return {
+    paths,
+    fallback: true,
+  };
+}
