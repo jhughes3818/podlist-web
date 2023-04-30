@@ -46,13 +46,13 @@ export default function List({ list }) {
     <>
       <div className="grid place-items-center ">
         <h1 className="text-3xl font-bold mb-7">{listTitle}</h1>
-        <div className="flex flex-col gap-3 ">
+        <div className="flex flex-col gap-3">
           {listItems.map((item, index) => {
             const link = `/episode/${item.id}`;
 
             return (
               <div className="flex flex-row">
-                <div className=" border-2 border-black flex flex-row rounded-md">
+                <div className="w-max border-2 border-black flex flex-row rounded-md">
                   <img src={item.image} className="h-52 w-52 rounded-s-md " />
                   <div className="h-52">
                     <h1 className="font-bold text-lg w-96 px-4">
