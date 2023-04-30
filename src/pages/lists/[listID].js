@@ -11,6 +11,9 @@ export default function List({ listItems, listTitle, episodeTitles }) {
         <meta property="og:description" content={episodeTitles} />
         <meta property="og:image" content={listItems[0].image} />
         <meta property="og:url" content={listItems[0].spotifyURL} />
+        <meta property="twiter:title" content={listTitle} />
+        <meta property="twiter:description" content={episodeTitles} />
+        <meta property="twiter:image" content={listItems[0].image} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Podlist" />
         <meta property="og:locale" content="en_US" />
