@@ -30,7 +30,7 @@ export default function List({ listItems, listTitle, episodeTitles }) {
                 <div className="w-max border-2 border-black flex flex-row rounded-md">
                   <img src={item.image} className="h-52 w-52 rounded-s-md " />
                   <div className="h-52">
-                    <h1 className="font-bold text-lg w-96 px-4">
+                    <h1 className="font-bold text-lg w-96 px-4 max-h-32 overflow-hidden line-clamp-4">
                       {item.title}
                     </h1>
                     <h1 className="text-sm text-gray-600 truncate w-96 px-4">
