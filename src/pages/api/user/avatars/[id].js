@@ -11,8 +11,10 @@ export default async function handler(req, res) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  console.log(user.profileImageUrl);
+  console.log(user);
+
+  const fullname = user.firstName + " " + user.lastName;
 
   // Return profileImageURL
-  res.status(200).json({ name: user.fullname, avatar: user.profileImageUrl });
+  res.status(200).json({ name: fullname, avatar: user.profileImageUrl });
 }
