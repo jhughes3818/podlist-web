@@ -14,5 +14,5 @@ export default async function handler(req, res) {
   console.log(user.profileImageUrl);
 
   // Return profileImageURL
-  res.status(200).json(user.profileImageUrl);
+  res.status(200).json({ name: user.fullname, avatar: user.profileImageUrl });
 }
