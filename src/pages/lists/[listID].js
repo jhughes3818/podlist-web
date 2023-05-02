@@ -17,6 +17,7 @@ export default function List({ listItems, listTitle, episodeTitles }) {
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Podlist" />
         <meta property="og:locale" content="en_US" />
+        <link rel="icon" href="https://fav.farm/🔥" />
       </Head>
       <div className="grid place-items-center ">
         <h1 className="text-3xl font-bold mb-7">{listTitle}</h1>
