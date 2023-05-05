@@ -2,8 +2,6 @@ import supabase from "../../../utils/supabase";
 import axios from "axios";
 
 export default function Shows({ episodes }) {
-  // Get the user ID from the route
-
   return (
     <div className="grid place-items-center h-screen">
       <h1 className="text-3xl font-bold mb-3">My Favourite Episodes</h1>
