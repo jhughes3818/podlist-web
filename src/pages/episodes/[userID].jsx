@@ -1,39 +1,59 @@
 import supabase from "../../../utils/supabase";
 import axios from "axios";
+import Head from "next/head";
 
 export default function Shows({ episodes }) {
+  const episodeTitles = episodes.map((episode) => episode.episodes.title);
+
   return (
-    <div className="grid place-items-center h-screen">
-      <h1 className="text-3xl font-bold mb-3">My Favourite Episodes</h1>
-      <div className="flex flex-col gap-2">
-        {episodes.map((episode) => (
-          <div className="w-max border-2 border-black flex flex-row rounded-md">
-            <img
-              src={episode.episodes.image}
-              className="h-52 w-52 rounded-s-md "
-            />
-            <div className="h-52">
-              <h1 className="font-bold text-lg w-96 px-4 max-h-32 overflow-hidden line-clamp-4">
-                {episode.episodes.title}
-              </h1>
-              <h1 className="text-sm text-gray-600 truncate w-96 px-4">
-                {episode.episodes.description}
-              </h1>
-              <div className="w-max rounded-md border-2 border-black px-2 py-1 ml-4">
-                <a href={episode.episodes.url || null}>
-                  <div>
-                    <img
-                      src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Black.png"
-                      className="h-5"
-                    ></img>
-                  </div>
-                </a>
+    <>
+      <Head>
+        <title>My Favourite Episodes</title>
+        <meta name="description" content={episodeTitles} />
+        <meta property="og:title" content={"My Favourite Episodes"} />
+        <meta property="og:description" content={episodeTitles} />
+        <meta property="og:image" content={episodes[0].episodes.image} />
+        <meta property="og:url" content={episodes[0].url} />
+        <meta property="twiter:title" content={"My Favourite Episodes"} />
+        <meta property="twiter:description" content={episodeTitles} />
+        <meta property="twiter:image" content={episodes[0].episodes.image} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Podlist" />
+        <meta property="og:locale" content="en_US" />
+        <link rel="icon" href="https://fav.farm/🔥" />
+      </Head>
+      <div className="grid place-items-center h-screen">
+        <h1 className="text-3xl font-bold mb-3">My Favourite Episodes</h1>
+        <div className="flex flex-col gap-2">
+          {episodes.map((episode) => (
+            <div className="w-max border-2 border-black flex flex-row rounded-md">
+              <img
+                src={episode.episodes.image}
+                className="h-52 w-52 rounded-s-md "
+              />
+              <div className="h-52">
+                <h1 className="font-bold text-lg w-96 px-4 max-h-32 overflow-hidden line-clamp-4">
+                  {episode.episodes.title}
+                </h1>
+                <h1 className="text-sm text-gray-600 truncate w-96 px-4">
+                  {episode.episodes.description}
+                </h1>
+                <div className="w-max rounded-md border-2 border-black px-2 py-1 ml-4">
+                  <a href={episode.episodes.url || null}>
+                    <div>
+                      <img
+                        src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Black.png"
+                        className="h-5"
+                      ></img>
+                    </div>
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
