@@ -6,15 +6,25 @@ export default async function handler(req, res) {
   const id = req.query.episode_id;
   // console.log(id);
 
+  const spotifyURL = `https://open.spotify.com/episode/${id}`;
+
   // console.log("Getting Episode");
+  // const { data: episodeData, error } = await supabase
+  //   .from("episodes")
+  //   .select("*")
+  //   .eq("id", id)
+  //   .single();
+  // if (error) {
+  //   // console.log(error);
+  // }
+
   const { data: episodeData, error } = await supabase
     .from("episodes")
     .select("*")
-    .eq("id", id)
+    .eq("url", spotifyURL)
     .single();
-  if (error) {
-    // console.log(error);
-  }
+
+  console.log(episodeData);
   // console.log(episodeData);
 
   // Check if title, description, and image are in the database already
