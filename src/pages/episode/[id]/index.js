@@ -106,13 +106,50 @@ export async function getServerSideProps(context) {
   //   },
   // });
 
-  const og = await axios.get("http://localhost:3000/api/og", {
+  const spotify_client_id = process.env.SPOTIFY_CLIENT_ID;
+  const spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+
+  const spotify_token = await axios({
+    method: "post",
+    url: "https://accounts.spotify.com/api/token",
     params: {
-      episode_id: id,
+      grant_type: "client_credentials",
+    },
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
+          "base64"
+        ),
     },
   });
 
-  const episode = og.data;
+  console.log(spotify_token.data.access_token);
+
+  const spotify = await axios.get(
+    `https://api.spotify.com/v1/episodes/${id}?market=US`,
+    {
+      headers: {
+        Authorization: "Bearer " + spotify_token.data.access_token,
+      },
+    }
+  );
+
+  const episode = {
+    title: spotify.data.name,
+    description: spotify.data.description,
+    image: spotify.data.images[0].url,
+    spotifyURL: spotify.data.external_urls.spotify,
+    show: spotify.data.show.name,
+  };
+
+  // const og = await axios.get("http://localhost:3000/api/og", {
+  //   params: {
+  //     episode_id: id,
+  //   },
+  // });
+
+  // const episode = og.data;
 
   return {
     props: {
