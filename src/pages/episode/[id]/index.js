@@ -100,17 +100,17 @@ export async function getServerSideProps(context) {
   const { id } = context.query;
 
   //Get og data
-  const og = await axios.get("https://podlist.co/api/og", {
-    params: {
-      episode_id: id,
-    },
-  });
-
-  // const og = await axios.get("http://localhost:3000/api/og", {
+  // const og = await axios.get("https://podlist.co/api/og", {
   //   params: {
   //     episode_id: id,
   //   },
   // });
+
+  const og = await axios.get("http://localhost:3000/api/og", {
+    params: {
+      episode_id: id,
+    },
+  });
 
   const episode = og.data;
 
