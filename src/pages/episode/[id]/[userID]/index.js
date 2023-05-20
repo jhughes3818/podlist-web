@@ -15,6 +15,7 @@ export default function Episode({ episode, userID }) {
   const [hasWindow, setHasWindow] = useState(false);
   const [audioPlayerState, setAudioPlayerState] = useState("paused");
   const [progress, setProgress] = useState(50);
+  const [borderColor, setBorderColor] = useState("black");
 
   // Play the audio when the user clicks the play button
   function playAudio(name) {
@@ -90,10 +91,15 @@ export default function Episode({ episode, userID }) {
     setAudio(episode.data.results[episodeIndex].episodeUrl);
   }
 
+  async function getColors() {
+    console.log(episode.colors.vibrant);
+  }
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       setHasWindow(true);
       getBookmarks();
+      getColors();
     }
   }, [episode]);
 
@@ -125,7 +131,10 @@ export default function Episode({ episode, userID }) {
             .
           </p> */}
 
-          <div className="w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 border-black p-5">
+          <div
+            className={`w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 p-5`}
+            style={{ borderColor: episode.colors.darkVibrant }}
+          >
             <img src={episode.image} className="h-50 w-50 mx-auto rounded-lg" />
             <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
             <p className="text-gray-600">{episode.show}</p>
@@ -290,6 +299,10 @@ export async function getServerSideProps(context) {
     appleMp3 = apple.data.results[episodeIndex].episodeUrl;
   }
 
+  const colors = await axios.get(
+    `https://color-api-nine.vercel.app/api/get-colors?url=${spotify.data.images[0].url}`
+  );
+
   const episode = {
     title: spotify.data.name,
     description: spotify.data.description,
@@ -298,6 +311,7 @@ export async function getServerSideProps(context) {
     show: spotify.data.show.name,
     appleURL: appleURL,
     appleMp3: appleMp3,
+    colors: colors.data.color,
   };
 
   // const og = await axios.get("http://localhost:3000/api/og", {
