@@ -4,9 +4,14 @@ import supabase from "../../../../../utils/supabase";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlayCircle } from "react-ionicons";
+import ReactPlayer from "react-player";
 
 export default function Episode({ episode, userID }) {
   const [bookmarks, setBookmarks] = useState([]);
+  const [show, setShow] = useState(episode.show);
+  const [episodeTitle, setEpisodeTitle] = useState(episode.title);
+  const [audio, setAudio] = useState("");
+  const [hasWindow, setHasWindow] = useState(false);
   async function getBookmarks() {
     console.log("Running function");
 
@@ -31,9 +36,33 @@ export default function Episode({ episode, userID }) {
     }
   }
 
+  async function getAppleLink() {
+    const appleResults = await axios.get(
+      "https://itunes.apple.com/search" + "?entity=podcast&term=" + show
+    );
+
+    const showID = appleResults.data.results[0].collectionId;
+
+    const episode = await axios.get(
+      `https://itunes.apple.com/lookup?id=${showID}&media=podcast&entity=podcastEpisode&limit=100`
+    );
+
+    // Find the index of the episode in the array where the title matches the title of the episode we're looking for
+    const episodeIndex = episode.data.results.findIndex(
+      (episode) => episode.trackName == episodeTitle
+    );
+
+    console.log(episodeIndex);
+
+    console.log(episode.data.results[episodeIndex].trackName);
+    setAudio(episode.data.results[episodeIndex].episodeUrl);
+  }
+
   useEffect(() => {
-    getBookmarks();
-  }, []);
+    if (typeof window !== "undefined") {
+      setHasWindow(true);
+    }
+  }, [episode]);
 
   return (
     <>
@@ -70,7 +99,7 @@ export default function Episode({ episode, userID }) {
             <div>
               <div className="flex flex-col gap-2">
                 <div className="mt-2 flex flex-row gap-2">
-                  <div className="w-max rounded-lg border-2 border-black px-2 py-1">
+                  {/* <div className="w-max rounded-lg border-2 border-black px-2 py-1">
                     <a href={episode.spotifyURL}>
                       <div>
                         <img
@@ -79,7 +108,17 @@ export default function Episode({ episode, userID }) {
                         ></img>
                       </div>
                     </a>
-                  </div>
+                  </div> */}
+                  {hasWindow === true ? (
+                    <ReactPlayer
+                      url={episode.mp3Url}
+                      controls={true}
+                      playIcon={
+                        <PlayCircle color={"gray"} height={"40"} width={"40"} />
+                      }
+                    />
+                  ) : null}
+
                   {episode.appleURL ? (
                     <div className=" rounded-lg border-2 border-black px-2 py-1">
                       <a href={episode.appleURL}>
@@ -126,12 +165,11 @@ export default function Episode({ episode, userID }) {
                     <div className="flex flex-row gap-2 items-center">
                       <div className="w-10 h-10 rounded-full bg-gray-200">
                         {/* Play icon from fontawesome*/}
-                        <PlayCircle
-                          color={"gray"}
-                          height={40}
-                          width={40}
-                          onClick={() => alert("Hi!")}
-                        />
+                        <a
+                          href={`${episode.spotifyURL}?t=${bookmark.timestamp}`}
+                        >
+                          <PlayCircle color={"gray"} height={40} width={40} />
+                        </a>
                       </div>
                       <div className="flex flex-col">
                         <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
@@ -189,7 +227,21 @@ export async function getServerSideProps(context) {
     }
   );
 
-  console.log(spotify.data);
+  const appleResults = await axios.get(
+    "https://itunes.apple.com/search" +
+      "?entity=podcast&term=" +
+      spotify.data.show.name
+  );
+
+  const showID = appleResults.data.results[0].collectionId;
+
+  const apple = await axios.get(
+    `https://itunes.apple.com/lookup?id=${showID}&media=podcast&entity=podcastEpisode&limit=100`
+  );
+
+  const episodeIndex = apple.data.results.findIndex(
+    (episode) => episode.trackName == spotify.data.name
+  );
 
   const episode = {
     title: spotify.data.name,
@@ -197,6 +249,7 @@ export async function getServerSideProps(context) {
     image: spotify.data.images[0].url,
     spotifyURL: spotify.data.external_urls.spotify,
     show: spotify.data.show.name,
+    mp3Url: apple.data.results[episodeIndex].episodeUrl,
   };
 
   // const og = await axios.get("http://localhost:3000/api/og", {
