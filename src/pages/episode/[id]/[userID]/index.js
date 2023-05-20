@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlayCircle, PauseCircle } from "react-ionicons";
 import ReactPlayer from "react-player";
-import ClipPlayer from "@/components/ClipPlayer";
+import ClipPlayer from "../../../../components/ClipPlayer";
 
 export default function Episode({ episode, userID }) {
   const [bookmarks, setBookmarks] = useState([]);

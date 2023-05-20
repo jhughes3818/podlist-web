@@ -1,4 +1,4 @@
-import ClipPlayer from "@/components/ClipPlayer";
+import ClipPlayer from "../../../components/ClipPlayer";
 import axios from "axios";
 import Head from "next/head";
 
