@@ -151,22 +151,22 @@ export async function getServerSideProps(context) {
     (episode) => episode.trackName == spotify.data.name
   );
 
+  let appleURL = null;
+
+  if (episodeIndex == -1) {
+    appleURL = null;
+  } else {
+    appleURL = apple.data.results[episodeIndex].trackViewUrl;
+  }
+
   const episode = {
     title: spotify.data.name,
     description: spotify.data.description,
     image: spotify.data.images[0].url,
     spotifyURL: spotify.data.external_urls.spotify,
     show: spotify.data.show.name,
-    appleURL: apple.data.results[episodeIndex].trackViewUrl,
+    appleURL: appleURL,
   };
-
-  // const og = await axios.get("http://localhost:3000/api/og", {
-  //   params: {
-  //     episode_id: id,
-  //   },
-  // });
-
-  // const episode = og.data;
 
   return {
     props: {
