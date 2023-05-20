@@ -3,8 +3,9 @@ import Head from "next/head";
 import supabase from "../../../../../utils/supabase";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { PlayCircle } from "react-ionicons";
+import { PlayCircle, PauseCircle } from "react-ionicons";
 import ReactPlayer from "react-player";
+import ClipPlayer from "@/components/ClipPlayer";
 
 export default function Episode({ episode, userID }) {
   const [bookmarks, setBookmarks] = useState([]);
@@ -12,6 +13,37 @@ export default function Episode({ episode, userID }) {
   const [episodeTitle, setEpisodeTitle] = useState(episode.title);
   const [audio, setAudio] = useState("");
   const [hasWindow, setHasWindow] = useState(false);
+  const [audioPlayerState, setAudioPlayerState] = useState("paused");
+  const [progress, setProgress] = useState(50);
+
+  // Play the audio when the user clicks the play button
+  function playAudio(name) {
+    const audioPlayer = document.querySelector("audio");
+    audioPlayer.play();
+    setAudioPlayerState("playing");
+  }
+
+  // Pause the audio when the user clicks the pause button
+  function pauseAudio(name) {
+    const audioPlayer = document.querySelector("audio");
+    audioPlayer.pause();
+    setAudioPlayerState("paused");
+  }
+
+  // Update the progress bar as the audio plays
+  function updateProgress(name) {
+    const audioPlayer = document.querySelector("audio");
+    const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    setProgress(progress);
+  }
+
+  useEffect(() => {
+    const audioPlayer = document.querySelector("audio");
+    if (audioPlayerState == "playing") {
+      audioPlayer.addEventListener("timeupdate", updateProgress);
+    }
+  }, [audioPlayerState]);
+
   async function getBookmarks() {
     console.log("Running function");
 
@@ -61,6 +93,7 @@ export default function Episode({ episode, userID }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setHasWindow(true);
+      getBookmarks();
     }
   }, [episode]);
 
@@ -97,9 +130,10 @@ export default function Episode({ episode, userID }) {
             <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
             <p className="text-gray-600">{episode.show}</p>
             <div>
+              <ClipPlayer src={episode.appleMp3} />
               <div className="flex flex-col gap-2">
                 <div className="mt-2 flex flex-row gap-2">
-                  {/* <div className="w-max rounded-lg border-2 border-black px-2 py-1">
+                  <div className="w-max rounded-lg border-2 border-black px-2 py-1">
                     <a href={episode.spotifyURL}>
                       <div>
                         <img
@@ -108,16 +142,7 @@ export default function Episode({ episode, userID }) {
                         ></img>
                       </div>
                     </a>
-                  </div> */}
-                  {hasWindow === true ? (
-                    <ReactPlayer
-                      url={episode.mp3Url}
-                      controls={true}
-                      playIcon={
-                        <PlayCircle color={"gray"} height={"40"} width={"40"} />
-                      }
-                    />
-                  ) : null}
+                  </div>
 
                   {episode.appleURL ? (
                     <div className=" rounded-lg border-2 border-black px-2 py-1">
@@ -159,26 +184,38 @@ export default function Episode({ episode, userID }) {
                     </div>
                   ) : null}
                 </div>
-                <h1 className="font-bold">Bookmarked moments</h1>
-                <div className="flex flex-col gap-2">
-                  {bookmarks.map((bookmark) => (
-                    <div className="flex flex-row gap-2 items-center">
-                      <div className="w-10 h-10 rounded-full bg-gray-200">
-                        {/* Play icon from fontawesome*/}
-                        <a
-                          href={`${episode.spotifyURL}?t=${bookmark.timestamp}`}
-                        >
-                          <PlayCircle color={"gray"} height={40} width={40} />
-                        </a>
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
-                          {bookmark.timestring}
-                        </p>
-                      </div>
+                {bookmarks.length > 0 ? (
+                  <div>
+                    <h1 className="font-bold">Bookmarked moments</h1>
+                    <div className="flex flex-col gap-2">
+                      {bookmarks.map((bookmark) => (
+                        <div className="flex flex-row gap-2 items-center">
+                          <div className="w-full">
+                            {/* Play icon from fontawesome*/}
+                            {/* <a
+                              href={`${episode.spotifyURL}?t=${bookmark.timestamp}`}
+                            >
+                              <PlayCircle
+                                color={"gray"}
+                                height={40}
+                                width={40}
+                              />
+                            </a> */}
+                            <ClipPlayer
+                              src={episode.appleMp3}
+                              startTimestamp={bookmark.timestamp}
+                            />
+                          </div>
+                          {/* <div className="flex flex-col">
+                            <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
+                              {bookmark.timestring}
+                            </p>
+                          </div> */}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
@@ -243,13 +280,24 @@ export async function getServerSideProps(context) {
     (episode) => episode.trackName == spotify.data.name
   );
 
+  let appleURL = null;
+  let appleMp3 = null;
+
+  if (episodeIndex == -1) {
+    appleURL = null;
+  } else {
+    appleURL = apple.data.results[episodeIndex].trackViewUrl;
+    appleMp3 = apple.data.results[episodeIndex].episodeUrl;
+  }
+
   const episode = {
     title: spotify.data.name,
     description: spotify.data.description,
     image: spotify.data.images[0].url,
     spotifyURL: spotify.data.external_urls.spotify,
     show: spotify.data.show.name,
-    mp3Url: apple.data.results[episodeIndex].episodeUrl,
+    appleURL: appleURL,
+    appleMp3: appleMp3,
   };
 
   // const og = await axios.get("http://localhost:3000/api/og", {

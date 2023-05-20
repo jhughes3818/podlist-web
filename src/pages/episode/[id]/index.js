@@ -1,3 +1,4 @@
+import ClipPlayer from "@/components/ClipPlayer";
 import axios from "axios";
 import Head from "next/head";
 
@@ -35,6 +36,7 @@ export default function Episode({ episode }) {
             <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
             <p className="text-gray-600">{episode.show}</p>
             <div>
+              <ClipPlayer src={episode.appleMp3} />
               <div className="flex flex-col gap-2">
                 <div className="mt-2 flex flex-row gap-2">
                   <div className="w-max rounded-lg border-2 border-black px-2 py-1">
@@ -152,11 +154,13 @@ export async function getServerSideProps(context) {
   );
 
   let appleURL = null;
+  let appleMp3 = null;
 
   if (episodeIndex == -1) {
     appleURL = null;
   } else {
     appleURL = apple.data.results[episodeIndex].trackViewUrl;
+    appleMp3 = apple.data.results[episodeIndex].episodeUrl;
   }
 
   const episode = {
@@ -166,6 +170,7 @@ export async function getServerSideProps(context) {
     spotifyURL: spotify.data.external_urls.spotify,
     show: spotify.data.show.name,
     appleURL: appleURL,
+    appleMp3: appleMp3,
   };
 
   return {
