@@ -2,6 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/episode/[id]/[userID]": "pages/episode/[id]/[userID].js",
-  "/episode/[id]": "pages/episode/[id].js"
+  "/api/spotify-token": "pages/api/spotify-token.js",
+  "/spotify": "pages/spotify.js"
 }
