@@ -279,29 +279,35 @@ export async function getServerSideProps(context) {
       spotify.data.show.name
   );
 
-  const showID = appleResults.data.results[0].collectionId;
+  let showID = null;
 
-  const apple = await axios.get(
-    `https://itunes.apple.com/lookup?id=${showID}&media=podcast&entity=podcastEpisode&limit=100`
-  );
+  if (showID != null) {
+    apple = await axios.get(
+      `https://itunes.apple.com/lookup?id=${showID}&media=podcast&entity=podcastEpisode&limit=100`
+    );
+  }
 
-  const episodeIndex = apple.data.results.findIndex(
-    (episode) => episode.trackName == spotify.data.name
-  );
+  let episodeIndex = -1;
+
+  if (apple != null) {
+    episodeIndex = apple.data.results.findIndex(
+      (episode) => episode.trackName == spotify.data.name
+    );
+  }
 
   let appleURL = null;
   let appleMp3 = null;
 
-  if (episodeIndex == -1) {
+  if (episodeIndex == -1 || showID == null) {
     appleURL = null;
   } else {
     appleURL = apple.data.results[episodeIndex].trackViewUrl;
     appleMp3 = apple.data.results[episodeIndex].episodeUrl;
   }
 
-  const colors = await axios.get(
-    `https://color-api-nine.vercel.app/api/get-colors?url=${spotify.data.images[0].url}`
-  );
+  // const colors = await axios.get(
+  //   `https://color-api-nine.vercel.app/api/get-colors?url=${spotify.data.images[0].url}`
+  // );
 
   const episode = {
     title: spotify.data.name,
