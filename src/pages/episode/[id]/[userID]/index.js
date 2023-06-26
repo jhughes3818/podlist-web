@@ -91,15 +91,15 @@ export default function Episode({ episode, userID }) {
     setAudio(episode.data.results[episodeIndex].episodeUrl);
   }
 
-  async function getColors() {
-    console.log(episode.colors.vibrant);
-  }
+  // async function getColors() {
+  //   console.log(episode.colors.vibrant);
+  // }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setHasWindow(true);
       getBookmarks();
-      getColors();
+      // getColors();
     }
   }, [episode]);
 
@@ -133,7 +133,7 @@ export default function Episode({ episode, userID }) {
 
           <div
             className={`w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 p-5`}
-            style={{ borderColor: episode.colors.darkVibrant }}
+            // style={{ borderColor: episode.colors.darkVibrant }}
           >
             <img src={episode.image} className="h-50 w-50 mx-auto rounded-lg" />
             <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
@@ -280,6 +280,7 @@ export async function getServerSideProps(context) {
   );
 
   let showID = null;
+  let apple = null;
 
   if (showID != null) {
     apple = await axios.get(
@@ -317,7 +318,7 @@ export async function getServerSideProps(context) {
     show: spotify.data.show.name,
     appleURL: appleURL,
     appleMp3: appleMp3,
-    colors: colors.data.color,
+    // colors: colors.data.color,
   };
 
   // const og = await axios.get("http://localhost:3000/api/og", {
