@@ -1,108 +1,8 @@
+import ClipPlayer from "../../../components/ClipPlayer";
 import axios from "axios";
 import Head from "next/head";
-import supabase from "../../../../../utils/supabase";
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { PlayCircle, PauseCircle } from "react-ionicons";
-import ReactPlayer from "react-player";
-import ClipPlayer from "../../../../components/ClipPlayer";
 
-export default function Episode({ episode, userID }) {
-  const [bookmarks, setBookmarks] = useState([]);
-  const [show, setShow] = useState(episode.show);
-  const [episodeTitle, setEpisodeTitle] = useState(episode.title);
-  const [audio, setAudio] = useState("");
-  const [hasWindow, setHasWindow] = useState(false);
-  const [audioPlayerState, setAudioPlayerState] = useState("paused");
-  const [progress, setProgress] = useState(50);
-  const [borderColor, setBorderColor] = useState("black");
-
-  // Play the audio when the user clicks the play button
-  function playAudio(name) {
-    const audioPlayer = document.querySelector("audio");
-    audioPlayer.play();
-    setAudioPlayerState("playing");
-  }
-
-  // Pause the audio when the user clicks the pause button
-  function pauseAudio(name) {
-    const audioPlayer = document.querySelector("audio");
-    audioPlayer.pause();
-    setAudioPlayerState("paused");
-  }
-
-  // Update the progress bar as the audio plays
-  function updateProgress(name) {
-    const audioPlayer = document.querySelector("audio");
-    const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-    setProgress(progress);
-  }
-
-  useEffect(() => {
-    const audioPlayer = document.querySelector("audio");
-    if (audioPlayerState == "playing") {
-      audioPlayer.addEventListener("timeupdate", updateProgress);
-    }
-  }, [audioPlayerState]);
-
-  async function getBookmarks() {
-    console.log("Running function");
-
-    const { data, error } = await supabase
-      .from("bookmarks")
-      .select("*")
-      .eq("user", userID)
-      .eq("episode_spotify_url", episode.spotifyURL);
-    if (error) {
-      console.log(error);
-    } else {
-      data.forEach((bookmark) => {
-        // Convert the timestamp to a string with format hh:mm:ss
-        bookmark.timestring = new Date(bookmark.timestamp)
-          .toISOString()
-          .substr(11, 8);
-      });
-
-      setBookmarks(data);
-
-      return data;
-    }
-  }
-
-  async function getAppleLink() {
-    const appleResults = await axios.get(
-      "https://itunes.apple.com/search" + "?entity=podcast&term=" + show
-    );
-
-    const showID = appleResults.data.results[0].collectionId;
-
-    const episode = await axios.get(
-      `https://itunes.apple.com/lookup?id=${showID}&media=podcast&entity=podcastEpisode&limit=100`
-    );
-
-    // Find the index of the episode in the array where the title matches the title of the episode we're looking for
-    const episodeIndex = episode.data.results.findIndex(
-      (episode) => episode.trackName == episodeTitle
-    );
-
-    console.log(episodeIndex);
-
-    console.log(episode.data.results[episodeIndex].trackName);
-    setAudio(episode.data.results[episodeIndex].episodeUrl);
-  }
-
-  // async function getColors() {
-  //   console.log(episode.colors.vibrant);
-  // }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setHasWindow(true);
-      getBookmarks();
-      // getColors();
-    }
-  }, [episode]);
-
+export default function Episode({ episode }) {
   return (
     <>
       <Head>
@@ -131,10 +31,7 @@ export default function Episode({ episode, userID }) {
             .
           </p> */}
 
-          <div
-            className={`w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 p-5`}
-            // style={{ borderColor: episode.colors.darkVibrant }}
-          >
+          <div className="w-96 items-center justify-center rounded-lg border-b-8 border-l-2 border-r-8 border-t-2 border-black p-5">
             <img src={episode.image} className="h-50 w-50 mx-auto rounded-lg" />
             <h1 className="mt-2 text-2xl font-bold">{episode.title}</h1>
             <p className="text-gray-600">{episode.show}</p>
@@ -152,7 +49,6 @@ export default function Episode({ episode, userID }) {
                       </div>
                     </a>
                   </div>
-
                   {episode.appleURL ? (
                     <div className=" rounded-lg border-2 border-black px-2 py-1">
                       <a href={episode.appleURL}>
@@ -193,38 +89,6 @@ export default function Episode({ episode, userID }) {
                     </div>
                   ) : null}
                 </div>
-                {bookmarks.length > 0 ? (
-                  <div>
-                    <h1 className="font-bold">Bookmarked moments</h1>
-                    <div className="flex flex-col gap-2">
-                      {bookmarks.map((bookmark) => (
-                        <div className="flex flex-row gap-2 items-center">
-                          <div className="w-full">
-                            {/* Play icon from fontawesome*/}
-                            {/* <a
-                              href={`${episode.spotifyURL}?t=${bookmark.timestamp}`}
-                            >
-                              <PlayCircle
-                                color={"gray"}
-                                height={40}
-                                width={40}
-                              />
-                            </a> */}
-                            <ClipPlayer
-                              src={episode.appleMp3}
-                              startTimestamp={bookmark.timestamp}
-                            />
-                          </div>
-                          {/* <div className="flex flex-col">
-                            <p className="text-sm text-gray-500 mb-0 p-0 leading-none font-semibold">
-                              {bookmark.timestring}
-                            </p>
-                          </div> */}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
               </div>
             </div>
           </div>
@@ -235,7 +99,7 @@ export default function Episode({ episode, userID }) {
 }
 
 export async function getServerSideProps(context) {
-  const { id, userID } = context.query;
+  const { id } = context.query;
 
   //Get og data
   // const og = await axios.get("https://podlist.co/api/og", {
@@ -279,7 +143,8 @@ export async function getServerSideProps(context) {
       spotify.data.show.name
   );
 
-  let showID = null;
+  const showID = appleResults.data.results[0]?.collectionId;
+
   let apple = null;
 
   if (showID != null) {
@@ -306,10 +171,6 @@ export async function getServerSideProps(context) {
     appleMp3 = apple.data.results[episodeIndex].episodeUrl;
   }
 
-  // const colors = await axios.get(
-  //   `https://color-api-nine.vercel.app/api/get-colors?url=${spotify.data.images[0].url}`
-  // );
-
   const episode = {
     title: spotify.data.name,
     description: spotify.data.description,
@@ -318,35 +179,11 @@ export async function getServerSideProps(context) {
     show: spotify.data.show.name,
     appleURL: appleURL,
     appleMp3: appleMp3,
-    // colors: colors.data.color,
   };
-
-  // const og = await axios.get("http://localhost:3000/api/og", {
-  //   params: {
-  //     episode_id: id,
-  //   },
-  // });
-
-  // const episode = og.data;
-
-  console.log(userID);
-  console.log(spotify.data.external_urls.spotify);
-
-  // Get bookmarks for the current episode
-  const { bookmarks, error } = await supabase
-    .from("bookmarks")
-    .select("*")
-    .eq("episode_spotify_url", spotify.data.external_urls.spotify)
-    .eq("user", userID);
-
-  console.log(error);
-
-  console.log(bookmarks);
 
   return {
     props: {
       episode,
-      userID,
     },
   };
 }
