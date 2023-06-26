@@ -24,13 +24,6 @@ export default function Episode({ episode, userID }) {
     setAudioPlayerState("playing");
   }
 
-  // Pause the audio when the user clicks the pause button
-  function pauseAudio(name) {
-    const audioPlayer = document.querySelector("audio");
-    audioPlayer.pause();
-    setAudioPlayerState("paused");
-  }
-
   // Update the progress bar as the audio plays
   function updateProgress(name) {
     const audioPlayer = document.querySelector("audio");
