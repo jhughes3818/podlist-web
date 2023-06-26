@@ -14,6 +14,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@supabase/supabase-js": "^2.21.0",
     "axios": "^1.4.0",
+    "color.js": "^1.2.0",
     "extract-colors": "^3.0.0",
     "fetch-opengraph": "^1.0.36",
     "font-awesome": "^4.7.0",
